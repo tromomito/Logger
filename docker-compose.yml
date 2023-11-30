@@ -1,0 +1,30 @@
+version: "3.5"
+
+services:
+    php:
+        build: ./docker/php
+        container_name: logger-php
+        volumes:
+            - ./:/opt/project/
+        environment:
+            PHP_IDE_CONFIG: 'serverName=logger.docker'
+            PROJECT_DOMAIN: 'http://localhost:8082'
+        networks:
+            - default
+
+    webserver:
+        build: ./docker/nginx
+        container_name: logger-nginx
+        ports:
+            - "8082:80"
+        volumes:
+            - ./:/opt/project/
+        depends_on:
+            - php
+        links:
+            - php
+        networks:
+            - default
+
+networks:
+    default:
